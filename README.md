@@ -30,16 +30,17 @@ Magazin online prin care clienții răsfoiesc materiale de construcții, le adau
 | **Backend** | Spring Boot + Spring Data JPA + Spring Security / JWT |
 | **Bază de date** | PostgreSQL |
 
-- **Backend partajat** cu o viitoare aplicație web.
+- **Backend partajat** cu o viitoare aplicație web, într-un **repo separat** (`Backend-RoxIdeal`).
 
 ### Structura repo
 
 ```
 RoxIdeal---Calcul-Mobil/
 ├── frontend/     # aplicația Android (Kotlin + Jetpack Compose)
-├── backend/      # API REST (Spring Boot + PostgreSQL)
 └── README.md
 ```
+
+Backend-ul (API REST Spring Boot + PostgreSQL) trăiește în repo-ul separat `Backend-RoxIdeal`.
 
 ---
 
