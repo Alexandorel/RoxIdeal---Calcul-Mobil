@@ -1,5 +1,6 @@
 package com.example.roxideal
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -8,7 +9,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.example.roxideal.data.remote.ApiClient
 import com.example.roxideal.data.remote.ProductDto
@@ -76,7 +80,18 @@ fun ProductsScreen(modifier: Modifier = Modifier) {
         products == null -> Text("Se încarcă...", modifier = modifier)
         else -> LazyColumn(modifier = modifier) {
             items(products!!) { p ->
-                Text("${p.name} — ${p.price} lei (stoc: ${p.stock})")
+                Text(
+                    "${p.name} — ${p.price} lei (stoc: ${p.stock})",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            context.startActivity(
+                                Intent(context, ProductDetailActivity::class.java)
+                                    .putExtra("productId", p.id)
+                            )
+                        }
+                        .padding(16.dp)
+                )
             }
         }
     }
