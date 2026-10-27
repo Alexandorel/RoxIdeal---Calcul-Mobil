@@ -20,13 +20,17 @@ data class RegisterRequest(
 
 data class TokenResponse(val token: String)
 
+data class CategoryDto(val id: Long, val name: String)
+
 data class ProductDto(
     val id: Long,
     val name: String,
     val description: String?,
     val price: BigDecimal,
     val stock: Int,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val unit: String?,
+    val category: CategoryDto?
 )
 
 data class ProductRequest(
