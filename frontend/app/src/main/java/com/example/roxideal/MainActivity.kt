@@ -10,7 +10,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,11 +20,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,8 +36,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.example.roxideal.data.remote.ApiClient
@@ -57,20 +63,22 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoxTopBar() {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(R.drawable.roxid_logo),
                     contentDescription = "Logo Roxid",
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(RoundedCornerShape(8.dp))
                 )
-                Text("RoxIdeal", modifier = Modifier.padding(start = 12.dp))
+                Text("RoxIdeal", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 12.dp))
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface
         )
     )
 }
@@ -110,18 +118,38 @@ fun ProductsScreen(modifier: Modifier = Modifier) {
         products == null -> Text("Se încarcă...", modifier = modifier)
         else -> LazyColumn(modifier = modifier) {
             items(products!!) { p ->
-                Text(
-                    "${p.name} — ${p.price} lei (stoc: ${p.stock})",
+                Card(
+                    onClick = {
+                        context.startActivity(
+                            Intent(context, ProductDetailActivity::class.java)
+                                .putExtra("productId", p.id)
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            context.startActivity(
-                                Intent(context, ProductDetailActivity::class.java)
-                                    .putExtra("productId", p.id)
-                            )
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                ) {
+                    Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        // Placeholder until product images are loaded from imageUrl
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                        )
+                        Column(modifier = Modifier.padding(start = 12.dp)) {
+                            Text(p.name, style = MaterialTheme.typography.titleMedium)
+                            Text("${p.price} lei", style = MaterialTheme.typography.titleLarge)
+                            if (p.stock == 0) {
+                                Text(
+                                    "Stoc epuizat",
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            }
                         }
-                        .padding(16.dp)
-                )
+                    }
+                }
             }
         }
     }
